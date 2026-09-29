@@ -19,6 +19,8 @@ class DiveFragment : Fragment() {
 
     private val viewModel: DiveViewModel by viewModels()
 
+    private val adapter = SubdomainAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,6 +32,8 @@ class DiveFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.subdomainsList.adapter = adapter
 
         binding.diveButton.setOnClickListener {
             val input = binding.inputEdit.text?.toString()?.trim().orEmpty()
@@ -45,6 +49,10 @@ class DiveFragment : Fragment() {
             error?.let {
                 Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
             }
+        }
+
+        viewModel.subdomains.observe(viewLifecycleOwner) { list ->
+            adapter.submitList(list)
         }
     }
 
