@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    app:startDestination="@id/diveFragment">
+
+    <fragment
+        android:id="@+id/diveFragment"
+        android:name="com.krecsa.sublurk.ui.dive.DiveFragment"
+        android:label="Dive"
+        tools:layout="@layout/fragment_dive" />
+
+</navigation>
