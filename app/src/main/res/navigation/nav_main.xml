@@ -11,4 +11,20 @@
         android:label="Dive"
         tools:layout="@layout/fragment_dive" />
 
+    <fragment
+        android:id="@+id/domainDetailsFragment"
+        android:name="com.krecsa.sublurk.ui.domain.DomainDetailsFragment"
+        android:label="Domain"
+        tools:layout="@layout/fragment_domain_details">
+
+        <argument
+            android:name="domain"
+            app:argType="string" />
+
+    </fragment>
+
+    <action
+        android:id="@+id/action_diveFragment_to_domainDetailsFragment"
+        app:destination="@id/domainDetailsFragment" />
+
 </navigation>

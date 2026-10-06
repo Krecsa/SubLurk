@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.krecsa.sublurk.R
 import com.krecsa.sublurk.databinding.FragmentDiveBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,7 +21,15 @@ class DiveFragment : Fragment() {
 
     private val viewModel: DiveViewModel by viewModels()
 
-    private val adapter = SubdomainAdapter()
+    private val adapter = SubdomainAdapter { subdomain ->
+        val bundle = Bundle().apply {
+            putString("domain", subdomain)
+        }
+        findNavController().navigate(
+            R.id.action_diveFragment_to_domainDetailsFragment,
+            bundle,
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
