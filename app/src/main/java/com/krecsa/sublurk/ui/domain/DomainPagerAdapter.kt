@@ -8,14 +8,13 @@ class DomainPagerAdapter(
     private val domain: String,
 ) : FragmentStateAdapter(fragment) {
 
-    override fun getItemCount(): Int = 4
+    override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> SubdomainsTabFragment.newInstance(domain)
-            1 -> DnsTabFragment.newInstance(domain)
-            2 -> IpTabFragment.newInstance(domain)
-            3 -> WhoisTabFragment.newInstance(domain)
+            0 -> DnsTabFragment.newInstance(domain)
+            1 -> IpTabFragment.newInstance(domain)
+            2 -> WhoisTabFragment.newInstance(domain)
             else -> throw IllegalArgumentException("Unknown position: $position")
         }
     }

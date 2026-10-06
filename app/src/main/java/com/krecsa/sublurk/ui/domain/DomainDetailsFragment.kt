@@ -37,10 +37,9 @@ class DomainDetailsFragment : Fragment() {
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
-                0 -> "Subdomains"
-                1 -> "DNS"
-                2 -> "IP"
-                3 -> "WHOIS"
+                0 -> "DNS"
+                1 -> "IP"
+                2 -> "WHOIS"
                 else -> ""
             }
         }.attach()
