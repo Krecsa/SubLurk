@@ -15,6 +15,8 @@ class DomainDetailsFragment : Fragment() {
     private var _binding: FragmentDomainDetailsBinding? = null
     private val binding get() = _binding!!
 
+    private var tabMediator: TabLayoutMediator? = null
+
     private var domain: String = ""
 
     override fun onCreateView(
@@ -35,18 +37,21 @@ class DomainDetailsFragment : Fragment() {
         val adapter = DomainPagerAdapter(this, domain)
         binding.viewPager.adapter = adapter
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+        tabMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
                 0 -> "DNS"
                 1 -> "IP"
                 2 -> "WHOIS"
                 else -> ""
             }
-        }.attach()
+        }.also { it.attach() }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        tabMediator?.detach()
+        tabMediator = null
+        binding.viewPager.adapter = null
         _binding = null
     }
 }

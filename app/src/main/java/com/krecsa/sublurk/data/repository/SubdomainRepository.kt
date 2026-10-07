@@ -14,7 +14,10 @@ class SubdomainRepository @Inject constructor(
     private val dao: SubdomainDao,
 ) {
 
-    suspend fun getSubdomains(domain: String, forceRefresh: Boolean = false): Result<List<String>> {
+    suspend fun getSubdomains(
+        domain: String,
+        forceRefresh: Boolean = false,
+    ): Result<List<String>> {
         if (!forceRefresh) {
             val cached = dao.getByDomain(domain)
             if (cached.isNotEmpty()) {
@@ -81,7 +84,17 @@ class SubdomainRepository @Inject constructor(
             .map { it.trim().lowercase() }
             .filter { it.endsWith(domain) }
             .map { it.removePrefix("*.") }
+            .filter { isSubdomain(it, domain) }
             .distinct()
             .sorted()
+    }
+
+    private fun isSubdomain(value: String, domain: String): Boolean {
+        if (value.contains("@")) return false
+        if (value.matches(Regex("""^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"""))) return false
+        if (!value.endsWith(".$domain")) return false
+        if (value.length > 253) return false
+        if (!value.matches(Regex("""^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$"""))) return false
+        return true
     }
 }
