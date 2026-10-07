@@ -35,17 +35,10 @@ class IpTabViewModel @Inject constructor(
             _error.value = null
 
             try {
-                var ipAddress = resolveIp(domain, "A")
+                val ipAddress = resolveIpWithCname(domain, maxDepth = 5)
 
-                if (ipAddress.isNullOrBlank() || !isValidIp(ipAddress)) {
-                    val cname = resolveIp(domain, "CNAME")
-                    if (!cname.isNullOrBlank()) {
-                        ipAddress = resolveIp(cname, "A")
-                    }
-                }
-
-                if (ipAddress.isNullOrBlank() || !isValidIp(ipAddress)) {
-                    _error.value = "Не удалось определить IP"
+                if (ipAddress.isNullOrBlank()) {
+                    _error.value = "Не удалось определить IP для $domain"
                     _loading.value = false
                     return@launch
                 }
@@ -64,6 +57,26 @@ class IpTabViewModel @Inject constructor(
                 _loading.value = false
             }
         }
+    }
+
+    private suspend fun resolveIpWithCname(domain: String, maxDepth: Int): String? {
+        var current = domain
+
+        repeat(maxDepth) {
+            val ipAddress = resolveIp(current, "A")
+            if (!ipAddress.isNullOrBlank() && isValidIp(ipAddress)) {
+                return ipAddress
+            }
+
+            val cname = resolveIp(current, "CNAME")
+            if (cname.isNullOrBlank()) {
+                return null
+            }
+
+            current = cname
+        }
+
+        return null
     }
 
     private suspend fun resolveIp(domain: String, type: String): String? {
