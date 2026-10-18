@@ -14,7 +14,7 @@ class WhoisTabFragment : Fragment() {
 
     companion object {
         private const val ARG_DOMAIN = "domain"
-        fun newInstance(domain: String) = DnsTabFragment().apply {
+        fun newInstance(domain: String) = WhoisTabFragment().apply {
             arguments = Bundle().apply { putString(ARG_DOMAIN, domain) }
         }
     }
