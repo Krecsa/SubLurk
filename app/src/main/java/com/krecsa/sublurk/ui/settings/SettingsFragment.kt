@@ -21,6 +21,8 @@ class SettingsFragment : Fragment() {
 
     private val viewModel: SettingsViewModel by viewModels()
 
+    private var isUpdating = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,27 +35,32 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.theme.collect { theme ->
+                isUpdating = true
                 when (theme) {
                     "light" -> binding.themeLight.isChecked = true
                     "dark" -> binding.themeDark.isChecked = true
                     else -> binding.themeSystem.isChecked = true
                 }
+                isUpdating = false
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.language.collect { lang ->
+                isUpdating = true
                 when (lang) {
                     "en" -> binding.langEn.isChecked = true
                     "ru" -> binding.langRu.isChecked = true
                     else -> binding.langSystem.isChecked = true
                 }
+                isUpdating = false
             }
         }
 
         binding.themeGroup.setOnCheckedChangeListener { _, checkedId ->
+            if (isUpdating) return@setOnCheckedChangeListener
             val theme = when (checkedId) {
                 R.id.themeLight -> "light"
                 R.id.themeDark -> "dark"
@@ -63,6 +70,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.languageGroup.setOnCheckedChangeListener { _, checkedId ->
+            if (isUpdating) return@setOnCheckedChangeListener
             val lang = when (checkedId) {
                 R.id.langEn -> "en"
                 R.id.langRu -> "ru"

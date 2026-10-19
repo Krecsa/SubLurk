@@ -1,18 +1,22 @@
 package com.krecsa.sublurk.data
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
-import dagger.hilt.android.qualifiers.ApplicationContext
-val Context.dataStore by preferencesDataStore(name = "settings")
 
+val Context.dataStore by preferencesDataStore(name = "settings")
 
 @Singleton
 class SettingsManager @Inject constructor(
@@ -31,11 +35,18 @@ class SettingsManager @Inject constructor(
         prefs[LANGUAGE_KEY] ?: "system"
     }
 
+    fun applyThemeFromPrefs() {
+        val theme = runBlocking {
+            themeFlow.first()
+        }
+        applyTheme(theme, immediate = true)
+    }
+
     suspend fun setTheme(theme: String) {
         context.dataStore.edit { prefs ->
             prefs[THEME_KEY] = theme
         }
-        applyTheme(theme)
+        applyTheme(theme, immediate = false)
     }
 
     suspend fun setLanguage(language: String) {
@@ -45,11 +56,19 @@ class SettingsManager @Inject constructor(
         applyLanguage(language)
     }
 
-    fun applyTheme(theme: String) {
-        when (theme) {
-            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    fun applyTheme(theme: String, immediate: Boolean) {
+        val applyAction = {
+            when (theme) {
+                "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+        }
+
+        if (immediate) {
+            applyAction()
+        } else {
+            Handler(Looper.getMainLooper()).postDelayed(applyAction, 100)
         }
     }
 
