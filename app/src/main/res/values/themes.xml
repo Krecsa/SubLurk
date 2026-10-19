@@ -1,5 +1,9 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.SubLurk" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">#2A4337</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>
