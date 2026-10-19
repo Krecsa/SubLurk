@@ -43,6 +43,15 @@ class DiveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            if (item.itemId == R.id.action_settings) {
+                findNavController().navigate(R.id.action_diveFragment_to_settingsFragment)
+                true
+            } else {
+                false
+            }
+        }
+
         binding.subdomainsList.adapter = adapter
 
         binding.diveButton.setOnClickListener {
