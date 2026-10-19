@@ -3,7 +3,7 @@ package com.krecsa.sublurk.di
 import com.krecsa.sublurk.data.network.CrtShApi
 import com.krecsa.sublurk.data.network.GoogleDnsApi
 import com.krecsa.sublurk.data.network.IpInfoApi
-import com.krecsa.sublurk.data.network.RdapApi
+import com.krecsa.sublurk.data.network.WhoisApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -65,10 +65,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    @Named("rdap")
-    fun provideRdapRetrofit(client: OkHttpClient): Retrofit =
+    @Named("whois")
+    fun provideWhoisRetrofit(client: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl("https://rdap.org/")
+            .baseUrl("https://wwhois.ru/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -90,6 +90,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideRdapApi(@Named("rdap") retrofit: Retrofit): RdapApi =
-        retrofit.create(RdapApi::class.java)
+    fun provideWhoisApi(@Named("whois") retrofit: Retrofit): WhoisApi =
+        retrofit.create(WhoisApi::class.java)
 }

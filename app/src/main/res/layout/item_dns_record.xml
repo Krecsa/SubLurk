@@ -2,25 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="12dp"
-    android:baselineAligned="false">
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
 
     <TextView
         android:id="@+id/typeText"
-        android:layout_width="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:textSize="14sp"
-        android:text="A" />
+        android:textSize="12sp"
+        android:text="TYPE" />
 
     <TextView
         android:id="@+id/dataText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:textSize="16sp"
         android:fontFamily="monospace"
-        android:text="127.0.0.1" />
+        android:text="data" />
 
 </LinearLayout>
