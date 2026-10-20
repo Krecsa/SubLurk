@@ -1,7 +1,7 @@
 package com.krecsa.sublurk.data.repository
 
+import com.krecsa.sublurk.data.SubdomainParser
 import com.krecsa.sublurk.data.network.CrtShApi
-import com.krecsa.sublurk.data.network.CrtShEntry
 import com.krecsa.sublurk.data.local.SubdomainDao
 import com.krecsa.sublurk.data.local.SubdomainEntity
 import kotlinx.coroutines.delay
@@ -38,7 +38,7 @@ class SubdomainRepository @Inject constructor(
 
                 if (response.isSuccessful) {
                     val entries = response.body().orEmpty()
-                    val subdomains = extractSubdomains(entries, domain)
+                    val subdomains = SubdomainParser.extractSubdomains(entries, domain)
 
                     dao.deleteByDomain(domain)
                     dao.insertAll(
@@ -73,28 +73,5 @@ class SubdomainRepository @Inject constructor(
         }
 
         return Result.failure(lastError ?: Exception("Не удалось получить данные"))
-    }
-
-    private fun extractSubdomains(
-        entries: List<CrtShEntry>,
-        domain: String,
-    ): List<String> {
-        return entries
-            .flatMap { it.nameValue?.split("\n").orEmpty() }
-            .map { it.trim().lowercase() }
-            .filter { it.endsWith(domain) }
-            .map { it.removePrefix("*.") }
-            .filter { isSubdomain(it, domain) }
-            .distinct()
-            .sorted()
-    }
-
-    private fun isSubdomain(value: String, domain: String): Boolean {
-        if (value.contains("@")) return false
-        if (value.matches(Regex("""^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$"""))) return false
-        if (!value.endsWith(".$domain")) return false
-        if (value.length > 253) return false
-        if (!value.matches(Regex("""^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$"""))) return false
-        return true
     }
 }
