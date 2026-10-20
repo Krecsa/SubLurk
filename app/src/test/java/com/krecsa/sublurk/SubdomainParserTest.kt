@@ -2,6 +2,8 @@ package com.krecsa.sublurk
 
 import com.krecsa.sublurk.data.SubdomainParser
 import com.krecsa.sublurk.data.network.CrtShEntry
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class SubdomainParserTest {
 
