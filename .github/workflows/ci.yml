@@ -20,6 +20,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Create local.properties
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> local.properties
+          echo "BASE_URL=http://94.228.125.136:8080/" >> local.properties
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
