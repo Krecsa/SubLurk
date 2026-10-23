@@ -22,7 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="#D32F2F"
+        android:paddingHorizontal="16dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="18sp"
         android:visibility="gone" />
 
 </FrameLayout>

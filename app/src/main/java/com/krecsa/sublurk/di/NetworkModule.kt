@@ -1,5 +1,6 @@
 package com.krecsa.sublurk.di
 
+import com.krecsa.sublurk.data.network.CertSpotterApi
 import com.krecsa.sublurk.data.network.CrtShApi
 import com.krecsa.sublurk.data.network.GoogleDnsApi
 import com.krecsa.sublurk.data.network.IpInfoApi
@@ -45,6 +46,16 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("certspotter")
+    fun provideCertSpotterRetrofit(client: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .baseUrl("https://api.certspotter.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+
+    @Provides
+    @Singleton
     @Named("googledns")
     fun provideGoogleDnsRetrofit(client: OkHttpClient): Retrofit =
         Retrofit.Builder()
@@ -77,6 +88,11 @@ object NetworkModule {
     @Singleton
     fun provideCrtShApi(@Named("crtsh") retrofit: Retrofit): CrtShApi =
         retrofit.create(CrtShApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCertSpotterApi(@Named("certspotter") retrofit: Retrofit): CertSpotterApi =
+        retrofit.create(CertSpotterApi::class.java)
 
     @Provides
     @Singleton

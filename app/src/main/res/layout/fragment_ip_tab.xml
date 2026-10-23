@@ -14,13 +14,6 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/errorText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#D32F2F"
-                android:visibility="gone" />
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="IP"
@@ -112,7 +105,6 @@
                 android:textSize="16sp" />
 
         </LinearLayout>
-
     </ScrollView>
 
     <com.krecsa.sublurk.ui.view.RadarView
@@ -120,6 +112,16 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingHorizontal="16dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:textSize="18sp"
         android:visibility="gone" />
 
 </FrameLayout>
