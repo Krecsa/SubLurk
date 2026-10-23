@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -25,14 +26,19 @@ class SettingsManager @Inject constructor(
     companion object {
         val THEME_KEY = stringPreferencesKey("theme")
         val LANGUAGE_KEY = stringPreferencesKey("language")
+        val HIDE_PRIVATE_IP_KEY = booleanPreferencesKey("hide_private_ip")
     }
 
     val themeFlow: Flow<String> = context.dataStore.data.map { prefs ->
-        prefs[THEME_KEY] ?: "system"
+        prefs[THEME_KEY] ?: "dark"
     }
 
     val languageFlow: Flow<String> = context.dataStore.data.map { prefs ->
         prefs[LANGUAGE_KEY] ?: "system"
+    }
+
+    val hidePrivateIpFlow: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[HIDE_PRIVATE_IP_KEY] ?: false
     }
 
     fun applyThemeFromPrefs() {
@@ -54,6 +60,12 @@ class SettingsManager @Inject constructor(
             prefs[LANGUAGE_KEY] = language
         }
         applyLanguage(language)
+    }
+
+    suspend fun setHidePrivateIp(hide: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[HIDE_PRIVATE_IP_KEY] = hide
+        }
     }
 
     fun applyTheme(theme: String, immediate: Boolean) {

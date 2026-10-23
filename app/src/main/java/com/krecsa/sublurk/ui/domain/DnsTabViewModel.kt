@@ -4,16 +4,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.krecsa.sublurk.data.SettingsManager
 import com.krecsa.sublurk.data.network.GoogleDnsApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DnsTabViewModel @Inject constructor(
     private val googleDnsApi: GoogleDnsApi,
+    private val settingsManager: SettingsManager,
 ) : ViewModel() {
 
     private val _loading = MutableLiveData(false)
@@ -32,6 +35,7 @@ class DnsTabViewModel @Inject constructor(
             _records.value = emptyList()
 
             try {
+                val hidePrivateIp = settingsManager.hidePrivateIpFlow.first()
                 val types = listOf("A", "AAAA", "MX", "TXT", "NS", "CNAME")
 
                 val responses = types.map { type ->
@@ -64,20 +68,32 @@ class DnsTabViewModel @Inject constructor(
                     }
                 }.awaitAll()
 
-                val allRecords = responses.flatten()
-                    .distinct()
-                    .sortedBy { it.type }
+                var allRecords = responses.flatten().distinct().sortedBy { it.type }
+
+                if (hidePrivateIp) {
+                    allRecords = allRecords.filter { record ->
+                        !(record.type == "A" && isPrivateIp(record.data))
+                    }
+                }
 
                 if (allRecords.isEmpty()) {
-                    _error.value = "DNS записи не найдены"
+                    _error.value = "error_no_dns"
                 } else {
                     _records.value = allRecords
                 }
             } catch (e: Exception) {
-                _error.value = "Ошибка: ${e.message}"
+                _error.value = "error_network"
             } finally {
                 _loading.value = false
             }
         }
+    }
+
+    private fun isPrivateIp(ip: String): Boolean {
+        val parts = ip.split(".").mapNotNull { it.toIntOrNull() }
+        if (parts.size != 4) return false
+        return parts[0] == 10 ||
+                (parts[0] == 172 && parts[1] in 16..31) ||
+                (parts[0] == 192 && parts[1] == 168)
     }
 }

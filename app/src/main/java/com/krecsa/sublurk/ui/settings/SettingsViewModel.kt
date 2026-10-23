@@ -14,6 +14,7 @@ class SettingsViewModel @Inject constructor(
 
     val theme = settingsManager.themeFlow
     val language = settingsManager.languageFlow
+    val hidePrivateIp = settingsManager.hidePrivateIpFlow
 
     fun setTheme(theme: String) {
         viewModelScope.launch {
@@ -24,6 +25,12 @@ class SettingsViewModel @Inject constructor(
     fun setLanguage(language: String) {
         viewModelScope.launch {
             settingsManager.setLanguage(language)
+        }
+    }
+
+    fun setHidePrivateIp(hide: Boolean) {
+        viewModelScope.launch {
+            settingsManager.setHidePrivateIp(hide)
         }
     }
 }

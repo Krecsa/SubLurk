@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.krecsa.sublurk.R
 import com.krecsa.sublurk.databinding.FragmentDnsTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +22,6 @@ class DnsTabFragment : Fragment() {
 
     companion object {
         private const val ARG_DOMAIN = "domain"
-
         fun newInstance(domain: String) = DnsTabFragment().apply {
             arguments = Bundle().apply { putString(ARG_DOMAIN, domain) }
         }
@@ -40,16 +40,25 @@ class DnsTabFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val domain = arguments?.getString(ARG_DOMAIN).orEmpty()
-
         binding.list.adapter = adapter
 
         viewModel.loading.observe(viewLifecycleOwner) { loading ->
             binding.progress.isVisible = loading
+            if (loading) binding.progress.startAnimation() else binding.progress.stopAnimation()
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            binding.errorText.isVisible = error != null
-            binding.errorText.text = error
+        viewModel.error.observe(viewLifecycleOwner) { errorCode ->
+            if (errorCode != null) {
+                binding.errorText.isVisible = true
+                binding.errorText.text = getString(
+                    when (errorCode) {
+                        "error_no_dns" -> R.string.error_no_dns
+                        else -> R.string.error_network
+                    }
+                )
+            } else {
+                binding.errorText.isVisible = false
+            }
         }
 
         viewModel.records.observe(viewLifecycleOwner) { records ->
@@ -57,6 +66,11 @@ class DnsTabFragment : Fragment() {
         }
 
         viewModel.load(domain)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _binding?.progress?.stopAnimation()
     }
 
     override fun onDestroyView() {

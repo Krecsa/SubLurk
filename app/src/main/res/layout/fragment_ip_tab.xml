@@ -16,7 +16,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="IP"
+                android:text="@string/ip_label"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="8dp" />
@@ -32,7 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Country"
+                android:text="@string/country_label"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="12dp" />
@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="City"
+                android:text="@string/city_label"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="12dp" />
@@ -62,7 +62,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Region"
+                android:text="@string/region_label"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="12dp" />
@@ -77,7 +77,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Organization"
+                android:text="@string/org_label"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="12dp" />
@@ -92,7 +92,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Timezone"
+                android:text="@string/timezone_label"
                 android:textStyle="bold"
                 android:textSize="12sp"
                 android:layout_marginTop="12dp" />

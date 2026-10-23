@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.krecsa.sublurk.R
 import com.krecsa.sublurk.databinding.FragmentIpTabBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,7 +21,6 @@ class IpTabFragment : Fragment() {
 
     companion object {
         private const val ARG_DOMAIN = "domain"
-
         fun newInstance(domain: String) = IpTabFragment().apply {
             arguments = Bundle().apply { putString(ARG_DOMAIN, domain) }
         }
@@ -42,11 +42,21 @@ class IpTabFragment : Fragment() {
 
         viewModel.loading.observe(viewLifecycleOwner) { loading ->
             binding.progress.isVisible = loading
+            if (loading) binding.progress.startAnimation() else binding.progress.stopAnimation()
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            binding.errorText.isVisible = error != null
-            binding.errorText.text = error
+        viewModel.error.observe(viewLifecycleOwner) { errorCode ->
+            if (errorCode != null) {
+                binding.errorText.isVisible = true
+                binding.errorText.text = getString(
+                    when (errorCode) {
+                        "error_no_ip" -> R.string.error_no_ip
+                        else -> R.string.error_network
+                    }
+                )
+            } else {
+                binding.errorText.isVisible = false
+            }
         }
 
         viewModel.ip.observe(viewLifecycleOwner) { ip ->
@@ -55,7 +65,6 @@ class IpTabFragment : Fragment() {
 
         viewModel.info.observe(viewLifecycleOwner) { info ->
             if (info == null) return@observe
-
             binding.countryValue.text = info.country ?: "—"
             binding.cityValue.text = info.city ?: "—"
             binding.regionValue.text = info.region ?: "—"
@@ -64,6 +73,11 @@ class IpTabFragment : Fragment() {
         }
 
         viewModel.load(domain)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _binding?.progress?.stopAnimation()
     }
 
     override fun onDestroyView() {

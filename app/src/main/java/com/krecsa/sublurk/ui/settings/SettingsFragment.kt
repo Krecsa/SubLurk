@@ -20,7 +20,6 @@ class SettingsFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: SettingsViewModel by viewModels()
-
     private var isUpdating = false
 
     override fun onCreateView(
@@ -59,6 +58,12 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.hidePrivateIp.collect { hide ->
+                binding.hidePrivateIpCheckbox.isChecked = hide
+            }
+        }
+
         binding.themeGroup.setOnCheckedChangeListener { _, checkedId ->
             if (isUpdating) return@setOnCheckedChangeListener
             val theme = when (checkedId) {
@@ -79,8 +84,12 @@ class SettingsFragment : Fragment() {
             viewModel.setLanguage(lang)
         }
 
+        binding.hidePrivateIpCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setHidePrivateIp(isChecked)
+        }
+
         binding.clearCacheButton.setOnClickListener {
-            Snackbar.make(binding.root, "Кеш очищен (заглушка)", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(binding.root, getString(R.string.cache_cleared), Snackbar.LENGTH_SHORT).show()
         }
     }
 

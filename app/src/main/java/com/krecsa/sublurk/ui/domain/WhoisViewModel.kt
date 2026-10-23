@@ -44,15 +44,15 @@ class WhoisViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     val rawText = response.body()?.result?.content?.firstOrNull()?.text
                     if (rawText.isNullOrBlank()) {
-                        _error.value = "WHOIS данные пусты"
+                        _error.value = "WHOIS data is empty"
                     } else {
                         _whoisData.value = parseWhoisText(rawText)
                     }
                 } else {
-                    _error.value = "Ошибка сервера: ${response.code()}"
+                    _error.value = "Server error: ${response.code()}"
                 }
             } catch (e: Exception) {
-                _error.value = "Ошибка сети: ${e.message}"
+                _error.value = "Network error: ${e.message}"
             } finally {
                 _loading.value = false
             }
@@ -66,7 +66,13 @@ class WhoisViewModel @Inject constructor(
 
     private fun parseWhoisText(text: String): List<Pair<String, String>> {
         val result = mutableListOf<Pair<String, String>>()
+        val seenKeys = mutableSetOf<String>()
         val lines = text.lines()
+
+        val importantKeys = listOf(
+            "domain", "registrar", "org", "created", "paid-till",
+            "free-date", "nserver", "state", "admin-contact", "source"
+        )
 
         for (line in lines) {
             if (line.isBlank() || line.trim().startsWith("%") || line.trim().startsWith("#")) {
@@ -78,21 +84,18 @@ class WhoisViewModel @Inject constructor(
                 val key = line.substring(0, colonIndex).trim()
                 val value = line.substring(colonIndex + 1).trim()
 
-                val importantKeys = listOf(
-                    "domain", "registrar", "org", "created", "paid-till",
-                    "free-date", "nserver", "state", "admin-contact", "source"
-                )
-
                 if (importantKeys.any { key.equals(it, ignoreCase = true) }) {
-                    if (value.isNotBlank()) {
-                        result.add(key.replaceFirstChar { it.uppercase() } to value)
+                    val normalizedKey = key.lowercase()
+                    if (value.isNotBlank() && !seenKeys.contains(normalizedKey)) {
+                        seenKeys.add(normalizedKey)
+                        result.add(normalizedKey to value)
                     }
                 }
             }
         }
 
         if (result.isEmpty()) {
-            return listOf("WHOIS" to text)
+            return listOf("whois" to text)
         }
 
         return result

@@ -38,7 +38,7 @@ class IpTabViewModel @Inject constructor(
                 val ipAddress = resolveIpWithCname(domain, maxDepth = 5)
 
                 if (ipAddress.isNullOrBlank()) {
-                    _error.value = "Не удалось определить IP для $domain"
+                    _error.value = "error_no_ip"
                     _loading.value = false
                     return@launch
                 }
@@ -49,10 +49,10 @@ class IpTabViewModel @Inject constructor(
                 if (ipInfoResponse.isSuccessful) {
                     _info.value = ipInfoResponse.body()
                 } else {
-                    _error.value = "Ошибка IPinfo: ${ipInfoResponse.code()}"
+                    _error.value = "error_network"
                 }
             } catch (e: Exception) {
-                _error.value = "Ошибка: ${e.message}"
+                _error.value = "error_network"
             } finally {
                 _loading.value = false
             }
@@ -61,21 +61,13 @@ class IpTabViewModel @Inject constructor(
 
     private suspend fun resolveIpWithCname(domain: String, maxDepth: Int): String? {
         var current = domain
-
         repeat(maxDepth) {
             val ipAddress = resolveIp(current, "A")
-            if (!ipAddress.isNullOrBlank() && isValidIp(ipAddress)) {
-                return ipAddress
-            }
-
+            if (!ipAddress.isNullOrBlank() && isValidIp(ipAddress)) return ipAddress
             val cname = resolveIp(current, "CNAME")
-            if (cname.isNullOrBlank()) {
-                return null
-            }
-
+            if (cname.isNullOrBlank()) return null
             current = cname
         }
-
         return null
     }
 
@@ -83,9 +75,7 @@ class IpTabViewModel @Inject constructor(
         return try {
             val response = googleDnsApi.resolve(domain, type)
             response.body()?.answer?.firstOrNull()?.data
-        } catch (e: Exception) {
-            null
-        }
+        } catch (e: Exception) { null }
     }
 
     private fun isValidIp(value: String): Boolean {

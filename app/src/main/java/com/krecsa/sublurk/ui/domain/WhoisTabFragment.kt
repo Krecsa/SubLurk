@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.krecsa.sublurk.R
 import com.krecsa.sublurk.databinding.FragmentWhoisTabBinding
 import com.krecsa.sublurk.databinding.ItemWhoisFieldBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,6 +43,7 @@ class WhoisTabFragment : Fragment() {
 
         viewModel.loading.observe(viewLifecycleOwner) { loading ->
             binding.progress.isVisible = loading
+            if (loading) binding.progress.startAnimation() else binding.progress.stopAnimation()
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -53,15 +55,36 @@ class WhoisTabFragment : Fragment() {
             binding.container.removeAllViews()
             val inflater = LayoutInflater.from(requireContext())
 
-            for ((label, value) in data) {
+            for ((key, value) in data) {
                 val itemBinding = ItemWhoisFieldBinding.inflate(inflater, binding.container, false)
-                itemBinding.labelText.text = label
+                itemBinding.labelText.text = getLocalizedKey(key)
                 itemBinding.valueText.text = value
                 binding.container.addView(itemBinding.root)
             }
         }
 
         viewModel.load(domain)
+    }
+
+    private fun getLocalizedKey(key: String): String {
+        return when (key) {
+            "domain" -> getString(R.string.whois_domain)
+            "state" -> getString(R.string.whois_state)
+            "nserver" -> getString(R.string.whois_nserver)
+            "registrar" -> getString(R.string.whois_registrar)
+            "admin-contact" -> getString(R.string.whois_admin_contact)
+            "created" -> getString(R.string.whois_created)
+            "paid-till" -> getString(R.string.whois_paid_till)
+            "free-date" -> getString(R.string.whois_free_date)
+            "org" -> getString(R.string.whois_org)
+            "source" -> getString(R.string.whois_source)
+            else -> key.replaceFirstChar { it.uppercase() }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _binding?.progress?.stopAnimation()
     }
 
     override fun onDestroyView() {
