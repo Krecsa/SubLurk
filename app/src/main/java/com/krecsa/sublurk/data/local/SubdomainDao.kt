@@ -22,4 +22,7 @@ interface SubdomainDao {
 
     @Query("DELETE FROM subdomains WHERE timestamp < :threshold")
     suspend fun deleteOlderThan(threshold: Long)
+
+    @Query("DELETE FROM subdomains")
+    suspend fun clearAll()
 }

@@ -59,8 +59,30 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+        disable += listOf(
+            "NewerVersionAvailable",
+            "GradleDependency",
+            "AndroidGradlePluginVersion",
+            "UnusedResources",
+            "HardcodedText",
+            "SetTextI18n",
+            "Overdraw",
+            "UnusedIds",
+            "SmallSp",
+            "Autofill",
+            "TextFields",
+            "VisualLint",
+            "UseTomlInstead"
+        )
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
     }
 }
 

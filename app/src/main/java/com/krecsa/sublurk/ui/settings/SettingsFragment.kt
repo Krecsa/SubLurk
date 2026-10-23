@@ -89,6 +89,7 @@ class SettingsFragment : Fragment() {
         }
 
         binding.clearCacheButton.setOnClickListener {
+            viewModel.clearCache()
             Snackbar.make(binding.root, getString(R.string.cache_cleared), Snackbar.LENGTH_SHORT).show()
         }
     }
