@@ -44,15 +44,15 @@ class WhoisViewModel @Inject constructor(
                 if (response.isSuccessful) {
                     val rawText = response.body()?.result?.content?.firstOrNull()?.text
                     if (rawText.isNullOrBlank()) {
-                        _error.value = "WHOIS data is empty"
+                        _error.value = "error_whois_empty"
                     } else {
                         _whoisData.value = parseWhoisText(rawText)
                     }
                 } else {
-                    _error.value = "Server error: ${response.code()}"
+                    _error.value = "error_network"
                 }
-            } catch (e: Exception) {
-                _error.value = "Network error: ${e.message}"
+            } catch (_: Exception) {
+                _error.value = "error_network"
             } finally {
                 _loading.value = false
             }

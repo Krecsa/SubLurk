@@ -51,4 +51,6 @@
     <string name="error_no_dns">DNS records not found</string>
     <string name="error_no_whois">WHOIS data is empty</string>
     <string name="error_network">Network error</string>
+    <string name="error_empty_domain">Please enter a domain</string>
+    <string name="error_no_subdomains">No subdomains found</string>
 </resources>

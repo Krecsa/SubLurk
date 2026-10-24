@@ -1,7 +1,6 @@
 package com.krecsa.sublurk.ui.dive
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,18 +61,29 @@ class DiveFragment : Fragment() {
 
         viewModel.loading.observe(viewLifecycleOwner) { loading ->
             binding.progress.isVisible = loading
+            if (loading) binding.progress.startAnimation() else binding.progress.stopAnimation()
             binding.diveButton.isEnabled = !loading
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            error?.let {
-                Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+        viewModel.error.observe(viewLifecycleOwner) { errorCode ->
+            if (errorCode != null) {
+                val message = when (errorCode) {
+                    "error_empty_domain" -> getString(R.string.error_empty_domain)
+                    "error_no_subdomains" -> getString(R.string.error_no_subdomains)
+                    else -> getString(R.string.error_network)
+                }
+                Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
             }
         }
 
         viewModel.subdomains.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        _binding?.progress?.stopAnimation()
     }
 
     override fun onDestroyView() {

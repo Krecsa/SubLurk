@@ -25,7 +25,7 @@ class DiveViewModel @Inject constructor(
 
     fun dive(domain: String, forceRefresh: Boolean = false) {
         if (domain.isBlank()) {
-            _error.value = "Введите домен"
+            _error.value = "error_empty_domain"
             return
         }
 
@@ -39,10 +39,10 @@ class DiveViewModel @Inject constructor(
             result.onSuccess { list ->
                 _subdomains.value = list
                 if (list.isEmpty()) {
-                    _error.value = "Поддомены не найдены"
+                    _error.value = "error_no_subdomains"
                 }
-            }.onFailure { e ->
-                _error.value = "Ошибка: ${e.message}"
+            }.onFailure {
+                _error.value = "error_network"
             }
 
             _loading.value = false

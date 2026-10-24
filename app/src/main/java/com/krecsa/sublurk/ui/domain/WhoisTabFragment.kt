@@ -46,9 +46,18 @@ class WhoisTabFragment : Fragment() {
             if (loading) binding.progress.startAnimation() else binding.progress.stopAnimation()
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            binding.errorText.isVisible = error != null
-            binding.errorText.text = error
+        viewModel.error.observe(viewLifecycleOwner) { errorCode ->
+            if (errorCode != null) {
+                binding.errorText.isVisible = true
+                binding.errorText.text = getString(
+                    when (errorCode) {
+                        "error_whois_empty" -> R.string.error_no_whois
+                        else -> R.string.error_network
+                    }
+                )
+            } else {
+                binding.errorText.isVisible = false
+            }
         }
 
         viewModel.whoisData.observe(viewLifecycleOwner) { data ->

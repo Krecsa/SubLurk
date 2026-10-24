@@ -51,4 +51,6 @@
     <string name="error_no_dns">DNS-записи не найдены</string>
     <string name="error_no_whois">WHOIS данные пусты</string>
     <string name="error_network">Ошибка сети</string>
+    <string name="error_empty_domain">Введите домен</string>
+    <string name="error_no_subdomains">Поддомены не найдены</string>
 </resources>
